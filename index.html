@@ -19,13 +19,19 @@
         <link
             href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css"
             rel="stylesheet" />
-
+        
+        <link rel="stylesheet" href="styles/stylesheet.css">
     
     </head>
     <body>
+        <section id="contenedor-principal">
 
-        <header>
-            <!-- Navbar -->
+        <section id="contenedor-izquierdo">
+           <div id="now"></div>
+        </section>
+        <!-- Indicadores -->
+        <section class="p-4 text-right bg-light" id="contenedor-derecho">
+
             <nav class="navbar navbar-expand-lg navbar-light bg-white">
                 <div class="container-fluid">
                     <button
@@ -54,15 +60,7 @@
                     </div>
                 </div>
             </nav>
-            <!-- Navbar -->
-        </header>
 
-        <!-- Indicadores -->
-        <section class="p-4 text-right bg-light">
-
-            <h4 id="datos" class="mb-3">
-                Datos
-            </h4>
             <div class="container">
       
                 <div
@@ -73,8 +71,9 @@
                             aria-label="Default select example">
                             <option selected>Ciudades</option>
                             <option value="Machala">Machala</option>
-                            <option value="Guayaquil">Guayaquil</option>
                             <option value="Quito">Quito</option>
+                            <option value="Cuenca">Cuenca</option>
+                            <option value="Guayaquil">Guayaquil</option>
                         </select>
                     </div>
       
@@ -177,6 +176,7 @@
             </div>
 
         </section>
+    </section>
         <!-- Indicadores -->
 
         <!-- MDB -->

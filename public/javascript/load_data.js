@@ -1,203 +1,239 @@
-import {tiempoArr, precipitacionArr, uvArr, temperaturaArr} from './static_data.js';
-
+import{tiempoArr, precipitacionArr, uvArr, temperaturaArr} from './static_data.js';
 let fechaActual = () => new Date().toISOString().slice(0,10);
 
-let cargarPrecipitacion = () => {
-    let actual= fechaActual();
-    let datos = [];
-
-    for (let index=0; index < tiempoArr.length; index++){
-        const tiempo = tiempoArr[index];
-        const precipitacion = precipitacionArr[index];
-
-        if(tiempo.includes(actual)){
-            datos.push(precipitacion);
+let cargarPrecipitacion= ()=>{
+    let fecha = fechaActual();
+    let arrTemp = []
+    for (let index=0; index<tiempoArr.length; index++){
+        const tiempo = tiempoArr[index]
+        const precipitacion = precipitacionArr[index]
+        if (tiempo.includes(fecha)){
+            arrTemp.push(precipitacion);
         }
     }
 
-  let max = Math.max(...datos);
-  let min = Math.min(...datos);
-  let sum = datos.reduce((a, b) => a + b, 0);
-  let prom = (sum / datos.length) || 0;
-
-  let precipitacionMinValue = document.getElementById("precipitacionMinValue");
-  let precipitacionPromValue = document.getElementById("precipitacionPromValue");
-  let precipitacionMaxValue = document.getElementById("precipitacionMaxValue");
-
-  precipitacionMinValue.textContent = `Min ${min} [mm]`;
-  precipitacionPromValue.textContent = `Prom ${ Math.round(prom * 100) / 100 } [mm]`;
-  precipitacionMaxValue.textContent = `Max ${max} [mm]`;
+    let min, max, prom;
+    min = Math.min(...arrTemp);
+    max = Math.max(...arrTemp);
+    prom = arrTemp.reduce((a, b) => a + b, 0)/arrTemp.length;
+    let precipitacionMinValue = document.getElementById("precipitacionMinValue")
+    let precipitacionPromValue = document.getElementById("precipitacionPromValue")
+    let precipitacionMaxValue = document.getElementById("precipitacionMaxValue")
+    precipitacionMinValue.textContent = `Min ${min} [mm]`;
+    precipitacionMaxValue.textContent = `Max ${max} [mm]`;
+    precipitacionPromValue.textContent = `Prom ${ Math.round(prom * 100) / 100 } [mm]`
 }
-
-let cargarFechaActual= () => {
-    let coleccionHTML = document.getElementsByTagName("h6")
-    let tituloH6 = coleccionHTML[0]
+cargarPrecipitacion();
+let cargarFechaActual = ()=>{
+    document.getElementsByTagName('h6')[0].textContent = fechaActual();
 }
+cargarFechaActual();
 
-let cargarOpenMeteo = () => {
-    let URL="https://api.open-meteo.com/v1/forecast?latitude=-2.1962&longitude=-79.8862&hourly=temperature_2m&timezone=auto";
-
-    fetch (URL)
-
+let cargarOpenMeteo = ()=>{
+    let URL = 'https://api.open-meteo.com/v1/forecast?latitude=-2.1962&longitude=-79.8862&hourly=temperature_2m&timezone=auto';
+    fetch(URL)
     .then(responseText => responseText.json())
-    .then(responseJSON => {
-      
+    .then (responseJSON =>{
+        //codigo para el chart
         let plotRef = document.getElementById('plot1');
-        
-         //Etiquetas del gráfico
-        let labels = responseJSON.hourly.time;
 
-        //Etiquetas de los datos
-        let data = responseJSON.hourly.temperature_2m;
-        let data2 = responseJSON.hourly.uv_index;
+    //Etiquetas del gráfico
+    let labels = responseJSON.hourly.time;
 
-        //Objeto de configuración del gráfico
-        let config = {
-        type: 'line',
-        data: {
-            labels: labels, 
-            datasets: [
-            {
-                label: 'Temperature [2m]',
-                data: data, 
-            },
-            {
-                label: 'UV Index',
-                data: data2,
-            }
-            ]
-        }
-        };
+    //Etiquetas de los datos
+    let data = responseJSON.hourly.temperature_2m;
+
+    //Objeto de configuración del gráfico
+    let config = {
+      type: 'line',
+      data: {
+        labels: labels, 
+        datasets: [
+          {
+            label: 'Temperature [2m]',
+            data: data, 
+          }
+        ]
+      }
+    };
 
     //Objeto con la instanciación del gráfico
     let chart1  = new Chart(plotRef, config);
-    console.log(responseJSON);
-  })
+    })
     .catch(console.error);
+
 }
 
-let cargarOpenMeteo2 = () => {
-    let URL2="https://api.open-meteo.com/v1/forecast?latitude=-2.1962&longitude=-79.8862&hourly=precipitation_probability&timezone=auto";
-    
-    fetch (URL2)
+cargarOpenMeteo();
 
-    .then(responseText => responseText.json())
-    .then(responseJSON => {
+let parseXML = (responseText) => {
+
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(responseText, "application/xml");
+
+
+  // Referencia al elemento `#forecastbody` del documento HTML
+
+  let forecastElement = document.querySelector("#forecastbody")
+  forecastElement.innerHTML = ''
+
+  // Procesamiento de los elementos con etiqueta `<time>` del objeto xml
+  let timeArr = xml.querySelectorAll("time")
+
+  timeArr.forEach(time => {
       
-        let plotRef2= document.getElementById('plot2');
-        
-         //Etiquetas del gráfico
-        let labels = responseJSON.hourly.time;
+      let from = time.getAttribute("from").replace("T", " ")
 
-        //Etiquetas de los datos
-        let data = responseJSON.hourly.precipitation_probability;
+      let humidity = time.querySelector("humidity").getAttribute("value")
+      let windSpeed = time.querySelector("windSpeed").getAttribute("mps")
+      let precipitation = time.querySelector("precipitation").getAttribute("probability")
+      let pressure = time.querySelector("pressure").getAttribute("value")
+      let cloud =time.querySelector("clouds").getAttribute("value")
 
-        //Objeto de configuración del gráfico
-        let config = {
-        type: 'bar',
-        backgroundColor: 'black',
-        data: {
-            labels: labels, 
-            datasets: [
-            {
-                label: 'Precipitacion probability',
-                data: data, 
-                backgroundColor: 'pink'
-            },
-            ]
-        }
-        };
+      let template = `
+          <tr>
+              <td>${from}</td>
+              <td>${humidity}</td>
+              <td>${windSpeed}</td>
+              <td>${precipitation}</td>
+              <td>${pressure}</td>
+              <td>${cloud}</td>
+          </tr>
+      `
 
-    //Objeto con la instanciación del gráfico
-    let chart2 = new Chart(plotRef2, config);
-    console.log(responseJSON);
+      //Renderizando la plantilla en el elemento HTML
+      forecastElement.innerHTML += template;
   })
-    .catch(console.error);
+
 }
 
 //Callback
 let selectListener = async (event) => {
-  
-    let selectedCity = event.target.value
 
-    // Lea la entrada de almacenamiento local
-    let cityStorage = localStorage.getItem(selectedCity);
-
-    if (cityStorage == null) {
+  let selectedCity = event.target.value
+  let cityStorage = localStorage.getItem(selectedCity);
+  console.log(cityStorage);
+  if (cityStorage == null ) {
+    
     try {
-
-        //API key
-        let APIkey = '1a3612948dbb57426cdf0168f648a395'
-        let url = `https://api.openweathermap.org/data/2.5/forecast?q=${selectedCity}&mode=xml&appid=${APIkey}`
-
-        let response = await fetch(url)
-        let responseText = await response.text()
-
-        // Guarde la entrada de almacenamiento local
-         
-        let parseXML= (responseText) => {
-
-            const parser = new DOMParser();
-            const xml = parser.parseFromString(responseText, "application/xml");
-        
-        
-            // Referencia al elemento `#forecastbody` del documento HTML
-        
-            let forecastElement = document.querySelector("#forecastbody")
-            forecastElement.innerHTML = ''
-        
-            // Procesamiento de los elementos con etiqueta `<time>` del objeto xml
-            let timeArr = xml.querySelectorAll("time")
-        
-            timeArr.forEach(time => {
-                
-                let from = time.getAttribute("from").replace("T", " ");
-                let humidity = time.querySelector("humidity").getAttribute("value");
-                let windSpeed = time.querySelector("windSpeed").getAttribute("mps")
-                let precipitation = time.querySelector("precipitation").getAttribute("probability")
-                let pressure = time.querySelector("pressure").getAttribute("value")
-                let cloud = time.querySelector("cloud").getAttribute("all")
-        
-                let template = `
-                    <tr>
-                        <td>${from}</td>
-                        <td>${humidity}</td>
-                        <td>${windSpeed}</td>
-                        <td>${precipitation}</td>
-                        <td>${pressure}</td>
-                        <td>${cloud}</td>
-                    </tr>
-                `
-        
-                //Renderizando la plantilla en el elemento HTML
-                forecastElement.innerHTML += template;
-            })
-        
-        }
-
-    await localStorage.setItem(selectedCity, responseText)
+       //API key
+       let APIkey = '4bc0afeecf73d808a4843fb335dffe09'
+       let url = `https://api.openweathermap.org/data/2.5/forecast?q=${selectedCity}&mode=xml&appid=${APIkey}`
+ 
+       let response = await fetch(url)
+       let responseText = await response.text()
+      
+       await localStorage.setItem(selectedCity, responseText)
 
     } catch (error) {
-        console.log(error)
+       console.log(error)
     }
 
-    } else {
-        // Procese un valor previo
-        parseXML(cityStorage)
-    }
+} else {
+    // Procese un valor previo
+    parseXML(cityStorage)
+    //hacer que solo se llame cada 3 horas
 
 }
-  
+
+
+}
+
+
+
 let loadForecastByCity = () => {
-  
-    //Handling event
-    let selectElement = document.querySelector("select")
-    selectElement.addEventListener("change", selectListener)
-  
+
+  let selectElement = document.querySelector("select")
+  selectElement.addEventListener("change", selectListener)
+
 }
+
+let ciudad='Machala';
+
+function obtenerCiudad(posicion) {
+  // Creamos un objeto XMLHttpRequest para realizar la petición a la API de geolocalización
+  var xhr = new XMLHttpRequest();
+
+  // Preparamos la petición a la API de geolocalización, pasando las coordenadas obtenidas como parámetros
+  xhr.open('GET', `https://nominatim.openstreetmap.org/reverse?format=json&lat=${posicion.coords.latitude}&lon=${posicion.coords.longitude}&zoom=18&addressdetails=1`, true);
+
+  // Configuramos la petición para que nos devuelva los datos en formato JSON
+  xhr.responseType = 'json';
+
+  // Cuando la petición finalice, obtenemos el nombre de la ciudad
+  xhr.onload = function() {
+      if (xhr.status === 200) {
+          var respuesta = xhr.response;
+          ciudad=respuesta.address.city;
+          console.log(ciudad);
+      } else {
+          console.log('Error: ' + xhr.status);
+      }
+  };
+
+  // Realizamos la petición
+  xhr.send();
+}
+
+// Obtenemos la ubicación actual del usuario
+navigator.geolocation.getCurrentPosition(obtenerCiudad, function(error) {
+  console.log('Error de geolocalización: ' + error.message);
+});
+
+
+
+//cargando el contenedor izquierdo
+let url = `https://api.openweathermap.org/data/2.5/forecast?q=${ciudad}&mode=xml&appid=4bc0afeecf73d808a4843fb335dffe09`
+
+
+let response = await fetch(url)
+let responseText = await response.text()
+
+let parseCiudadXML = (responseText) => {
+
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(responseText, "application/xml");
+
+  let cont_izquierdo = document.querySelector("#contenedor-izquierdo")
+  cont_izquierdo.innerHTML = ''
+
+  let timeArr = xml.querySelector("time")
+  let cod_img= timeArr.querySelector("symbol").getAttribute("var");
+  let URLimg= `https://openweathermap.org/img/wn/${cod_img}@2x.png`;
+  let temperature= timeArr.querySelector("temperature").getAttribute("value");
+  let weather= timeArr.querySelector("symbol").getAttribute("name");
+  let max= timeArr.querySelector("temperature").getAttribute("max");
+  let min= timeArr.querySelector("temperature").getAttribute("min");
+
+  var fechaActual = new Date();
+  var diaActual = fechaActual.getDay();
+  var mesActual = fechaActual.getMonth();
+  var anioActual = fechaActual.getFullYear();
+
+
+
+  let template=
+  `
+  <div class="card" id="now">
+      <img src= ${URLimg}>
+      <h1>Guayaquil</h1>
+      <h3>${weather}</h3>
+      <p>${fechaActual}</p>
+      <p>${parseInt(temperature-273.15)}°C</p>
+      <p>Max: ${parseInt(max-273.15)}°C Min:${parseInt(min-273.15)}°C</p>
+    </div>
+
+    <h3>7 Days Forecast</h3>
+
+    <div class="card" id="prediction">
+    <h3>Predicción</h3>
+    </div>
+  `
+  cont_izquierdo.innerHTML += template;
+
+}
+
+
 
 loadForecastByCity();
-cargarPrecipitacion();
-cargarFechaActual()
-cargarOpenMeteo();
-cargarOpenMeteo2();
+parseCiudadXML(responseText);

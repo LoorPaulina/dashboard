@@ -1,0 +1,49 @@
+body{
+}
+#contenedor-principal{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+#contenedor-izquierdo{ 
+    display: grid;
+    position: fixed;
+    width: 15%;
+    margin-left: 1%;
+    margin-top: 1%;
+    row-gap: 2%;
+
+
+}
+
+#now{
+    width: 100%;
+    align-items: center;
+    margin-top: 1%;
+    height: 50vh;
+}
+
+#prediccion{
+    width: 100%;
+    align-items: center;
+    height: 50vh;
+}
+
+#contenedor-derecho{
+    margin-left: 12%;
+}
+
+#contenedor-derecho h4{
+    margin-left: 10%;
+}
+
+header{
+}
+
+nav{
+    margin-left: 5%;
+}
+
+
+
+
