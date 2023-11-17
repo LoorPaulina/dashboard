@@ -197,39 +197,89 @@ let parseCiudadXML = (responseText) => {
   let cont_izquierdo = document.querySelector("#contenedor-izquierdo")
   cont_izquierdo.innerHTML = ''
 
-  let timeArr = xml.querySelector("time")
-  let cod_img= timeArr.querySelector("symbol").getAttribute("var");
+  let timeArr = xml.getElementsByTagName("time");
+
+
+  let cod_img= timeArr[0].querySelector("symbol").getAttribute("var");
   let URLimg= `https://openweathermap.org/img/wn/${cod_img}@2x.png`;
-  let temperature= timeArr.querySelector("temperature").getAttribute("value");
-  let weather= timeArr.querySelector("symbol").getAttribute("name");
-  let max= timeArr.querySelector("temperature").getAttribute("max");
-  let min= timeArr.querySelector("temperature").getAttribute("min");
+  let temperature= timeArr[0].querySelector("temperature").getAttribute("value");
+  let weather= timeArr[0].querySelector("symbol").getAttribute("name");
+  let max= timeArr[0].querySelector("temperature").getAttribute("max");
+  let min= timeArr[0].querySelector("temperature").getAttribute("min");
 
   var fechaActual = new Date();
-  var diaActual = fechaActual.getDay();
-  var mesActual = fechaActual.getMonth();
-  var anioActual = fechaActual.getFullYear();
-
+  var month= fechaActual.toString().split(" ")[1];
+  var day = fechaActual.toString().split(" ")[2];
+  var year= fechaActual.toString().split(" ")[3];
+  var hour= fechaActual.toString().split(" ")[4];
 
 
   let template=
   `
   <div class="card" id="now">
+      <h4>Today</h4>
       <img src= ${URLimg}>
-      <h1>Guayaquil</h1>
-      <h3>${weather}</h3>
-      <p>${fechaActual}</p>
-      <p>${parseInt(temperature-273.15)}°C</p>
-      <p>Max: ${parseInt(max-273.15)}°C Min:${parseInt(min-273.15)}°C</p>
+      <h2>${parseInt(temperature-273.15)}°C</h2>
+      <h2>&#x1F4CDGuayaquil</h2>
+      <h4>${weather}</h4>
+      <p>&#x1F4C5${month + " " + day + ", "+ year + "      "+hour}</p>
+      
+      <p>Max: ${parseInt(max-273.15)}°C - Min:${parseInt(min-273.15)}°C</p>
     </div>
 
-    <h3>7 Days Forecast</h3>
+    <h4>3 Days Forecast</h4>
 
     <div class="card" id="prediction">
-    <h3>Predicción</h3>
     </div>
   `
   cont_izquierdo.innerHTML += template;
+
+  let diaHoy=parseInt(fechaActual.toString().split(" ")[2]);
+
+  let prediction= document.getElementById("prediction");
+  for(let i=0; i<timeArr.length; i++){
+
+    diaHoy= diaHoy;
+    let fecha=parseInt(timeArr[i].getAttribute("from").toString().split("T")[0].split("-")[2]);
+    
+
+    //revisa los días no repetidos para la predicción
+    if(fecha>diaHoy){
+      let cod_img= timeArr[i].querySelector("symbol").getAttribute("var");
+      let URLimg= `https://openweathermap.org/img/wn/${cod_img}@2x.png`;
+      let temperature= timeArr[i].querySelector("temperature").getAttribute("value");
+      let weather= timeArr[i].querySelector("symbol").getAttribute("name");
+      let plantilla=`
+        <div class="prediction_day">
+        <div id="contenedor_img">
+        <img src= ${URLimg}>
+        </div>
+        <div id="data_prediction">
+        <p>${weather}</p>
+        <p>${month +" "+fecha+", "+year}</p>
+        <p>${parseInt(temperature-273.15)}°C</p>
+        </div>
+        </div>`
+
+      prediction.innerHTML += plantilla;
+      diaHoy=fecha;
+    }
+    
+  }
+}
+
+async function cargarApiSunrise(){
+
+  let endpoint= 'https://api.sunrisesunset.io/json?lat=-2.19616&lng=-79.88621';
+
+  try{
+      let response= await fetch(endpoint);
+      let json=await response.json();
+
+      console.log(json);
+  }catch(error){
+
+  }
 
 }
 
@@ -237,3 +287,5 @@ let parseCiudadXML = (responseText) => {
 
 loadForecastByCity();
 parseCiudadXML(responseText);
+cargarApiSunrise();
+

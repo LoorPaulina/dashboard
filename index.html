@@ -61,19 +61,68 @@
                 </div>
             </nav>
 
-            <div class="container">
-      
-                <div
-                    class="row justify-content-end row-cols-6 row-cols-md-6 g-3 mt-2">
+
+            <div id="indicadores-img">
+        
+                    <div class="card" id="wind">
+                    <svg>
+                        <circle class="bg" cx="57" cy="57" r="52"></circle>
+                        <circle class="meter-1" cx="57" cy="57" r="52"></circle>
+                    </svg>
+                <div id="texto">
+                <h3>Wind Status</h3>
+                <div id="wind-status">
+                    <h4>25</h4>
+                    <span>m/s</span>
+                </div>
+                </div>
+                </div>
+                
+
+
+                <div class="card" id="uv">
+                <div class="wrapper">
+                    <h3>Uv Index</h3>
+                <div class="gauge">
+                    <div class="slice-colors">
+                    <div class="st slice-item"></div>
+                    <div class="st slice-item"></div>
+                    <div class="st slice-item"></div>
+                    <div class="st slice-item"></div>
+                    <div class="st slice-item"></div>
+                    </div>
+                    <div class="needle"></div>
+                    <div class="gauge-center">
+                    <div class="label">RISK</div>
+                    <div class="number">HIGH</div>
+                    
+                    </div>
+                </div>
+                <p>0.5 V</p>
+                </div>
+                </div>
+                <div class="card" id="humidity">
+                    <h3>Humidity</h3>
+                </div>
+
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+
+
+            </div>
+            
+                
+
+                <div class="row justify-content-end row-cols-6 row-cols-md-6 g-3 mt-2">
       
                     <div class="col">
                         <select class="form-select form-select-lg mb-3"
                             aria-label="Default select example">
-                            <option selected>Ciudades</option>
+                            <option selected>Data by cities</option>
                             <option value="Machala">Machala</option>
                             <option value="Quito">Quito</option>
                             <option value="Cuenca">Cuenca</option>
-                            <option value="Guayaquil">Guayaquil</option>
                         </select>
                     </div>
       
@@ -81,8 +130,8 @@
                 <div class="row row-cols-1 row-cols-md-1 g-3 mt-2">
                     <div class="col">
       
-                        <div class="card">
-                            <div class="card-body">
+                        <div class="card" id="pronostico_por_dia">
+                            <div class="card-body" >
                                 <h5 class="card-title">Pronóstico del tiempo
                                     para 5 días con datos cada 3 horas por
                                     ciudad</h5>
@@ -191,5 +240,7 @@
         <script type="module" src="public/javascript/load_data.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
+        <!--Speedmeter-->
+        <script src="public/javascript/speed.js"></script>
     </body>
 </html>
