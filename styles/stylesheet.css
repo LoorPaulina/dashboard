@@ -23,6 +23,10 @@ body{
     height: 50vh;
 }
 
+#now h4{
+    margin-top: 5%;
+}
+
 #prediccion{
     width: 100%;
     align-items: center;
@@ -51,13 +55,29 @@ nav{
     height: 100%;
 }
 
-#now, #prediction, #wind, #humidity, #uv, #pronostico_por_dia{
+#now, #prediction, #wind, #humidity, #uv, #pronostico_por_dia, #humidity, #visibility, #feel, #precipitation{
     background: rgba(0, 0, 0, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.2); /* Borde blanco transparente */
     color: white;
     }
 
+.canvases{
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin-top: 15%;
+        margin-left: 25%;
+}
 
+#precipitation h3{
+    margin-top: 9%;
+}
+
+#sunrise{
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    
+}
 
 .text_card{
     color: white;
@@ -92,8 +112,6 @@ nav{
 svg{
     width: 114px;
     height: 114px;
-    margin: 1em;
-    margin-top: 25%;
 }
 
 .bg{
@@ -128,23 +146,46 @@ svg{
     }
 }
 
-#wind{
-    margin-top: 2%;
+
+#wind, #precipitation, #feel, #humidity, #visibility{
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 1fr;
-    height:97%;
+    grid-template-columns: 1fr;
+    grid-template-rows: 25% 50 25%;
+    text-align: center;
 }
 
-#uv{
-    margin-top: 2%;
+#wind h3, #visibility h3, #feel h3, #humidity h3{
+    margin-top: 8%;
 }
 
-#humidity{
-    margin-top: 2%;
+i{
+    margin-top: 10%;
 }
 
+#humidity div{
+    display: grid;
+    grid-template-columns: 20% 25%;
+    padding-left: 40%;
+    margin-bottom: 15%;
+}
 
+#visibility div{
+    display: grid;
+    grid-template-columns: 29% 25%;
+    padding-left: 35%;
+    margin-bottom: 20%;
+}
+
+#feel div{
+    display: grid;
+    grid-template-columns: 15% 20%;
+    padding-left: 42%;
+    margin-bottom: 15%;
+}
+
+svg{
+    margin-left: 35%;
+}
 
 #wind-speed p{
     font-size: 1.25rem;
@@ -169,10 +210,14 @@ svg{
 #indicadores-img{
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* Tres columnas de tamaño igual */
-    grid-template-rows: 90% 25%;
+    grid-template-rows: 60% 25%;
     grid-gap: 5px; /* Espacio entre las columnas */
     margin-left: 5%;
-    margin-bottom: 50px;
+    row-gap: 3%;
+}
+
+#uv p{
+    font-size: 100%;
 }
 
 .wrapper {
@@ -229,9 +274,9 @@ svg{
     color: #fff;
     text-align: center;
   }
-  .gauge-center .label, .gauge-center .number {display:block; width: 100%; text-align: center; border:0!important;}
+  .gauge-center .label, .gauge-center .number {display:block;  width: 100%; text-align: center; border:0!important;}
   .gauge-center .label {font-size:0.75em; opacity:0.6; margin:1.1em 0 0.3em 0;}
-  .gauge-center .number {font-size:1.2em;}
+  .gauge-center .number {font-size:1rem; margin-top: -3%;}
   
   .needle {
     width: 78px;
@@ -293,5 +338,49 @@ svg{
     transform: rotate(231deg);
     transform-origin: right;
     margin-left: 45%;
+
+  }
+
+.bg{
+    fill: none;
+    stroke-width: 10px;
+    stroke: rgba(0, 0, 0, 0.28);
+}
+
+.meter-1{
+    fill: rgba(0, 0, 0, 0.28);;
+    stroke-dasharray: 360;
+    stroke-dashoffset: 260;
+    stroke: #00ffff;
+    animation: progress-1 1.5s ease-out;
+}
+
+[class="meter-"]{
+    fill: none;
+    stroke-width: 20px;
+    transform-origin: 50% 50%;
+    transform: rotate(-90deg);
+    stroke-linecap: round;
+}
+
+circle{
+    fill: rgba(0, 0, 0, 0.28);
+}
+
+@keyframes progress-1 {
+    from{
+        stroke-dashoffset: 360;
+    }
+    to{
+        stroke-dashoffset: 260;
+    }
+}
+
+.windText{
+    display: grid;
+    grid-template-columns: 25% 20%;
+    text-align: center;
+    margin-left: 35%;
+}
 
   

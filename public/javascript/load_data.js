@@ -1,33 +1,18 @@
 import{tiempoArr, precipitacionArr, uvArr, temperaturaArr} from './static_data.js';
-let fechaActual = () => new Date().toISOString().slice(0,10);
+var fechaActual = new Date();
+var hour = parseInt(fechaActual.toString().split(" ")[4]);
+var month= fechaActual.toString().split(" ")[1];
+var day = fechaActual.toString().split(" ")[2];
+var year= fechaActual.toString().split(" ")[3];
+var hour= fechaActual.toString().split(" ")[4];
 
-let cargarPrecipitacion= ()=>{
-    let fecha = fechaActual();
-    let arrTemp = []
-    for (let index=0; index<tiempoArr.length; index++){
-        const tiempo = tiempoArr[index]
-        const precipitacion = precipitacionArr[index]
-        if (tiempo.includes(fecha)){
-            arrTemp.push(precipitacion);
-        }
-    }
+var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+ "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"
+];
+let monthNumber=monthNames.indexOf(month) + 1;
 
-    let min, max, prom;
-    min = Math.min(...arrTemp);
-    max = Math.max(...arrTemp);
-    prom = arrTemp.reduce((a, b) => a + b, 0)/arrTemp.length;
-    let precipitacionMinValue = document.getElementById("precipitacionMinValue")
-    let precipitacionPromValue = document.getElementById("precipitacionPromValue")
-    let precipitacionMaxValue = document.getElementById("precipitacionMaxValue")
-    precipitacionMinValue.textContent = `Min ${min} [mm]`;
-    precipitacionMaxValue.textContent = `Max ${max} [mm]`;
-    precipitacionPromValue.textContent = `Prom ${ Math.round(prom * 100) / 100 } [mm]`
-}
-cargarPrecipitacion();
-let cargarFechaActual = ()=>{
-    document.getElementsByTagName('h6')[0].textContent = fechaActual();
-}
-cargarFechaActual();
+
+
 
 let cargarOpenMeteo = ()=>{
     let URL = 'https://api.open-meteo.com/v1/forecast?latitude=-2.1962&longitude=-79.8862&hourly=temperature_2m&timezone=auto';
@@ -46,6 +31,7 @@ let cargarOpenMeteo = ()=>{
     //Objeto de configuración del gráfico
     let config = {
       type: 'line',
+      backgroundColor: 'black',
       data: {
         labels: labels, 
         datasets: [
@@ -148,38 +134,7 @@ let loadForecastByCity = () => {
 
 }
 
-let ciudad='Machala';
-
-function obtenerCiudad(posicion) {
-  // Creamos un objeto XMLHttpRequest para realizar la petición a la API de geolocalización
-  var xhr = new XMLHttpRequest();
-
-  // Preparamos la petición a la API de geolocalización, pasando las coordenadas obtenidas como parámetros
-  xhr.open('GET', `https://nominatim.openstreetmap.org/reverse?format=json&lat=${posicion.coords.latitude}&lon=${posicion.coords.longitude}&zoom=18&addressdetails=1`, true);
-
-  // Configuramos la petición para que nos devuelva los datos en formato JSON
-  xhr.responseType = 'json';
-
-  // Cuando la petición finalice, obtenemos el nombre de la ciudad
-  xhr.onload = function() {
-      if (xhr.status === 200) {
-          var respuesta = xhr.response;
-          ciudad=respuesta.address.city;
-          console.log(ciudad);
-      } else {
-          console.log('Error: ' + xhr.status);
-      }
-  };
-
-  // Realizamos la petición
-  xhr.send();
-}
-
-// Obtenemos la ubicación actual del usuario
-navigator.geolocation.getCurrentPosition(obtenerCiudad, function(error) {
-  console.log('Error de geolocalización: ' + error.message);
-});
-
+let ciudad='Guayaquil';
 
 
 //cargando el contenedor izquierdo
@@ -206,6 +161,13 @@ let parseCiudadXML = (responseText) => {
   let weather= timeArr[0].querySelector("symbol").getAttribute("name");
   let max= timeArr[0].querySelector("temperature").getAttribute("max");
   let min= timeArr[0].querySelector("temperature").getAttribute("min");
+
+  let humidity = timeArr[0].querySelector("humidity").getAttribute("value");
+
+  let visibility = timeArr[0].querySelector("visibility").getAttribute("value");
+
+  let feel=timeArr[0].querySelector("feels_like").getAttribute("value");
+
 
   var fechaActual = new Date();
   var month= fechaActual.toString().split(" ")[1];
@@ -263,29 +225,149 @@ let parseCiudadXML = (responseText) => {
 
       prediction.innerHTML += plantilla;
       diaHoy=fecha;
-    }
-    
+    }  
   }
+
+  //llenando cartilla de velocidad del viento
+  let windSpeed= timeArr[0].querySelector("windSpeed").getAttribute("mps");
+  let wind = document.querySelector("#wind");
+
+  wind.innerHTML += `<div class="windText"><h4>${windSpeed}</h4><p>m/s</p></div>`;
+
+  //llenando cartilla de humedad
+  let contenedorHumidity= document.querySelector("#humidity div");
+  let plantillaHumidity= `<h4>${humidity}%</h4>
+  <i class="fas fa-tint"></i>`
+
+  contenedorHumidity.innerHTML += plantillaHumidity;
+
+    //llenando cartilla de visibilidad
+    let contenedorVisibility= document.querySelector("#visibility div");
+    let plantillaVisibility= `<h4>${visibility}</h4>
+    <i class="fas fa-eye"></i>`
+  
+    contenedorVisibility.innerHTML += plantillaVisibility;
+
+    //llenando cartilla de feel like
+    let contenedorFeel= document.querySelector("#feel div");
+    let plantillaFeel= `<h4>${parseInt(feel-273.15)}</h4>
+    <i class="fas fa-thermometer-half"></i>`
+  
+    contenedorFeel.innerHTML += plantillaFeel;
+
+
+
 }
 
 async function cargarApiSunrise(){
 
-  let endpoint= 'https://api.sunrisesunset.io/json?lat=-2.19616&lng=-79.88621';
-
+  let endpoint= `https://api.sunrisesunset.io/json?lat=-2.19616&lng=-79.88621&timezone=America/Guayaquil&date=${year+"-"+monthNumber+"-"+day}`;
   try{
       let response= await fetch(endpoint);
       let json=await response.json();
 
-      console.log(json);
+      let sunrise=json.results.sunrise;
+      let sunset= json.results.sunset;
+
+      let contenedorSunrise= document.getElementById("sunrises");
+      let contenedorSunset= document.getElementById("sunset");
+      
+      contenedorSunrise.innerHTML = `<p>${sunrise}</p>`
+      contenedorSunset.innerHTML = `<p>${sunset}</p>`
+
   }catch(error){
 
   }
 
 }
 
+async function cargarApiMeteo(){
+
+  let endpoint= 'https://api.open-meteo.com/v1/forecast?latitude=-2.1962&longitude=-79.8862&hourly=uv_index&timezone=auto&forecast_days=1';
+  let uv_card= document.querySelector("#uv p");
+  let uv_Number= document.querySelector(".number");
+
+  try{
+    let response= await fetch(endpoint);
+    let json=await response.json();
+
+    let horas=json.hourly.time;
+    let uv= json.hourly.uv_index;
+
+    let index=0;
+
+
+    for(let i=0; i<horas.length; i++){
+      if(horas[i].split("T")[1].split(":")[0]==hour){
+          index=uv[i];
+      }
+    }
+
+    let uv_description= ["LOW", "MODERATE", "MEDIUM", "HIGH", "EXTREME"];
+    let description="";
+
+    index=parseFloat(index);
+      if(index<=0 || index<=2){
+        description=uv_description[0];
+      }else if(index<=3 || index<=5){
+        description=uv_description[1];
+      }else if(index<=6 || index<=7){
+        description=uv_description[2];
+      }else if(index<=8 || index<=10){
+        description=uv_description[3];
+      }else{
+        description=uv_description[4];
+      }
+
+
+    uv_card.innerHTML = `<h4>${index}   U.V</h4>`;
+    uv_Number.innerHTML += `<p>${description}</p>`
+
+    let rotacion= index *10;
+    console.log(rotacion)
+    
+    document.querySelector(".needle").style.transform = `rotate(${rotacion}deg)`;
+  
+
+
+
+}catch(error){
+
+}
+}
+
+//Dibujando solcito
+var c1 = document.getElementById("canvas1");
+var c2 = document.getElementById("canvas2");
+
+var ctx = c1.getContext("2d");
+ctx.beginPath();
+ctx.arc(100, 100, 90, 0, 2 * Math.PI);
+ctx.lineWidth = 2;
+ctx.stroke();
+
+animateCanvas();
+
+function animateCanvas(){
+  var w = 0;
+  var timer = setInterval(function(){
+    c2.width = w;
+    w += 1;
+        var ctx = c2.getContext("2d");
+        ctx.beginPath();
+        ctx.arc(100, 100, 89, 0, 2 * Math.PI);
+        ctx.fillStyle = "#efba32";
+        ctx.fill();
+    if (w===200){clearInterval(timer)}
+  }, 20);
+}
+
+
+
 
 
 loadForecastByCity();
 parseCiudadXML(responseText);
+cargarApiMeteo();
 cargarApiSunrise();
 

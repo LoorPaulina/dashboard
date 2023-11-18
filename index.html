@@ -21,7 +21,8 @@
             rel="stylesheet" />
         
         <link rel="stylesheet" href="styles/stylesheet.css">
-    
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-...." crossorigin="anonymous" />
+        
     </head>
     <body>
         <section id="contenedor-principal">
@@ -32,50 +33,17 @@
         <!-- Indicadores -->
         <section class="p-4 text-right bg-light" id="contenedor-derecho">
 
-            <nav class="navbar navbar-expand-lg navbar-light bg-white">
-                <div class="container-fluid">
-                    <button
-                        class="navbar-toggler"
-                        type="button"
-                        data-mdb-toggle="collapse"
-                        data-mdb-target="#navbarExample01"
-                        aria-controls="navbarExample01"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarExample01">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link" href="#indicadores">Indicadores</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#graficos">Gráficos</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#datos">Datos</a>
-                            </li>
-
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            
 
 
             <div id="indicadores-img">
-        
-                    <div class="card" id="wind">
+                
+                <div class="card" id="wind">
+                    <h3>Wind Speed</h3>
                     <svg>
-                        <circle class="bg" cx="57" cy="57" r="52"></circle>
-                        <circle class="meter-1" cx="57" cy="57" r="52"></circle>
+                    <circle class="bg" cx="57" cy="57" r="52"></circle>
+                    <circle class="meter-1" cx="57" cy="57" r="52"></circle>
                     </svg>
-                <div id="texto">
-                <h3>Wind Status</h3>
-                <div id="wind-status">
-                    <h4>25</h4>
-                    <span>m/s</span>
-                </div>
-                </div>
                 </div>
                 
 
@@ -94,20 +62,39 @@
                     <div class="needle"></div>
                     <div class="gauge-center">
                     <div class="label">RISK</div>
-                    <div class="number">HIGH</div>
+                    <div class="number"></div>
                     
                     </div>
                 </div>
-                <p>0.5 V</p>
+                <p></p>
                 </div>
                 </div>
-                <div class="card" id="humidity">
-                    <h3>Humidity</h3>
+                <div class="card" id="precipitation">
+                    <h3>Sunrise - Sunset</h3>
+                    <div id="sunrise">
+                    <p id="sunrises"></p>
+                    <div>
+                    <canvas id="canvas1" class="canvases" width="200" height="200"></canvas>
+                    <canvas id="canvas2" class="canvases" width="200" height="200"></canvas>
+                    </div>
+                    <p id="sunset"></p>
+                </div>
                 </div>
 
-                <div class="card"></div>
-                <div class="card"></div>
-                <div class="card"></div>
+                <div class="card" id="humidity">
+                    <h3>Humidity</h3>
+                    <div></div>
+                </div>
+
+                <div class="card" id="visibility">
+                    <h3>Visibility</h3>
+                    <div></div>
+                </div>
+
+                <div class="card" id="feel">
+                    <h3>Feels Like</h3>
+                    <div></div>
+                </div>
 
 
             </div>
@@ -156,61 +143,9 @@
                     </div>
                 </div>
                 
-            <h4 id="indicadores" class="mb-3">
-                Indicadores 
-            </h4>
-            <h6 class="mb-3">YYYY-MM-DD</h6>
-            <div class="container">
-                <div class="row row-cols-1 row-cols-md-3 g-3 mt-2">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Precipitación</h5>
-                                <p class="card-text">
-                                    <ul class="list-group list-group-light">
-                                        <li id="precipitacionMinValue" class="list-group-item">Min 0.0 [mm]</li>
-                                        <li id="precipitacionPromValue" class="list-group-item">Prom 0.0 [mm]</li>
-                                        <li id="precipitacionMaxValue" class="list-group-item">Max 0.0 [mm]</li>
-                                      </ul>  
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Uv</h5>
-                                <p class="card-text">
-                                    <ul class="list-group list-group-light">
-                                        <li id="uvMinValue" class="list-group-item">Min 0.0 [--]</li>
-                                        <li id="uvPromValue" class="list-group-item">Prom 0.0 [--]</li>
-                                        <li id="uvMaxValue" class="list-group-item">Max 0.0 [--]</li>
-                                      </ul>  
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Temperatura</h5>
-                                <p class="card-text">
-                                    <ul class="list-group list-group-light">
-                                        <li id="temperaturaMinValue" class="list-group-item">Min 0.0 [°C]</li>
-                                        <li id="temperaturaPromValue" class="list-group-item">Prom 0.0 [°C]</li>
-                                        <li id="temperaturaMaxValue" class="list-group-item">Max 0.0 [°C]</li>
-                                      </ul>  
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            
 
             <h4 id="graficos" class="mb-3">
-                Gráficos
+                Temperature Graphics
             </h4>
             <div class="container">
                 <div
@@ -241,6 +176,7 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
         <!--Speedmeter-->
-        <script src="public/javascript/speed.js"></script>
+        <script src="public/javascript/chart.js"></script>
+
     </body>
 </html>
