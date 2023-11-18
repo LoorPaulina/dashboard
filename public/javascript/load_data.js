@@ -362,6 +362,27 @@ function animateCanvas(){
   }, 20);
 }
 
+let loadExternalTable = async() => {
+  console.log("Gestion de riesgo")
+
+   let proxyURL = 'https://cors-anywhere.herokuapp.com/'
+   let url = proxyURL + 'https://www.gestionderiesgos.gob.ec/monitoreo-de-inundaciones/'
+
+
+  let response= await fetch(url)
+  let responseText =await response.text()
+
+  const parser= await new DOMParser();
+  const xml =await parser.parseFromString(responseText, "text/html")
+
+  let table= await xml.querySelector("#postcontent table")
+  document.getElementById("table").innerHTML=table.outerHTML
+
+
+
+
+ }
+
 
 
 
@@ -370,4 +391,4 @@ loadForecastByCity();
 parseCiudadXML(responseText);
 cargarApiMeteo();
 cargarApiSunrise();
-
+loadExternalTable();
